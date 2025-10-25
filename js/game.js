@@ -6,7 +6,7 @@
   4. Flujo de ronda / gameplay
   5. Setup pre-partida (stack de vistas + pasos)
   6. Botones de acción in-game
-  ========================================================== */
+========================================================== */
 
 
 /* ==========================================================
@@ -22,8 +22,9 @@ const setupHeaderMobile  = document.getElementById('setupHeaderMobile');
 const backBtn            = document.getElementById('backBtn');
 const setupStepLabel     = document.getElementById('setupStepLabel');
 
-// --- cards/pasos
+// --- cards/pasos visibles en setup / reglas
 const cardMode           = document.querySelector('.card-mode');
+const cardRules          = document.getElementById('card-rules');         // << NUEVO
 const trickSelectCard    = document.getElementById('trickSelectCard');
 const chillVsCard        = document.getElementById('chillVsCard');
 const playerCountCard    = document.getElementById('playerCountCard');
@@ -57,7 +58,12 @@ const playersContainer      = document.getElementById('playersContainer');
 const trickNameEl           = document.getElementById('trickName');
 const trickStyleEl          = document.getElementById('trickStyle');
 const trickDiffEl           = document.getElementById('trickDiff');
-const turnInfoEl            = document.getElementById('turnInfo');
+
+// bloque turno destacado
+const turnInfoBlockEl       = document.getElementById('turnInfoBlock');
+const turnInfoIconEl        = document.getElementById('turnInfoIcon');
+const turnInfoTextEl        = document.getElementById('turnInfoText');
+
 const logFeedEl             = document.getElementById('logFeed');
 
 // --- header info (arena/mode badge)
@@ -85,11 +91,17 @@ let callerIndex = null;
 let copyTargetIndex = null;
 let gameOver = false;
 
+// tracking de perks temporales
+let callerHasFreeRetry = false;          // Respeto >=100, doble intento sin letra
+let copierNoLetterBecauseRespect = false; // Respeto >=80
+let copierDoubleLetter = false;          // Respeto <=20
+let copierNearDeath = false;             // Respeto <0
+
 const LETTERS = ["F","I","N","G","E","R"]; // 6 letras => pierde
 
 
 /* wizard stack para el setup */
-let setupViewStack = []; // array de IDs de card principales, ej: ["card-mode","trickSelectCard","chillVsCard",...]
+let setupViewStack = []; // array de IDs de card principales
 
 
 /* ==========================================================
@@ -199,42 +211,35 @@ function updateModeBadge() {
 }
 
 // ---------- 3.3 Header mobile wizard visibility ----------
-
-// flag para saber si estamos en el subpaso "tu nombre" dentro de iaSelectCard
 let inIASubstepName = false;
 
 function forceHeader(labelText) {
-  // usar en SUB-PASOS dentro de la misma card (ej: pedir nombres o pedir tu nombre vs IA)
   setupHeaderMobile.style.display = ""; // visible
   setupStepLabel.textContent = labelText || "Setup";
 }
 
-function showSetupView(cardEl, labelText = "") {
-  // cuando mostramos una card grande "normal", salimos de subpasos internos
-  inIASubstepName = false;
-
-  // ocultar todas
+function hideAllSetupCards() {
+  // función centralizada: oculta TODO setup, incluidas reglas
   [
     cardMode,
+    cardRules,
     trickSelectCard,
     chillVsCard,
     playerCountCard,
     iaSelectCard,
     startMatchCard
   ].forEach(el => el && el.classList.add('hidden'));
+}
 
-  // mostrar la que toca
+function showSetupView(cardEl, labelText = "") {
+  inIASubstepName = false;
+
+  hideAllSetupCards();
+
   if (cardEl) {
     cardEl.classList.remove('hidden');
 
-    // reset sub-estado visual interno según card
-    if (cardEl === playerCountCard) {
-      // volvemos al subestado base: ocultar nombres hasta que confirmes cantidad
-      // (no forzamos nada acá porque confirmPlayerCountBtn es quien los muestra)
-    }
-
     if (cardEl === iaSelectCard) {
-      // al entrar "normal" a iaSelectCard: roster visible, campo nombre oculto
       iaRosterDiv.classList.remove('hidden');
       yourNameWrapper.classList.add('hidden');
       iaRosterDiv.style.opacity = "1";
@@ -242,7 +247,6 @@ function showSetupView(cardEl, labelText = "") {
     }
   }
 
-  // header back visible sólo si hay más de una vista en el stack
   if (setupViewStack.length <= 1) {
     setupHeaderMobile.style.display = "none";
   } else {
@@ -250,8 +254,6 @@ function showSetupView(cardEl, labelText = "") {
   }
 
   setupStepLabel.textContent = labelText || "Setup";
-
-  // aseguramos que estemos arriba
   window.scrollTo({ top: 0, behavior: 'instant' });
 }
 
@@ -262,46 +264,31 @@ function pushSetupView(cardEl, labelText) {
 }
 
 function popSetupView() {
-  // caso especial:
-  // si estamos dentro de iaSelectCard pero en el SUBPASO "tu nombre",
-  // el back NO debe sacar la card del stack. debe volver a mostrar el roster IA.
   if (inIASubstepName === true) {
-    // volvemos al subestado "Elegí oponente IA"
     inIASubstepName = false;
 
-    // restaurar roster visible
     iaRosterDiv.classList.remove('hidden');
     iaRosterDiv.style.opacity   = "1";
     iaRosterDiv.style.transform = "scale(1)";
 
-    // ocultar subform nombre
     yourNameWrapper.classList.add('hidden');
 
-    // header vuelve al label anterior:
     setupStepLabel.textContent = "Elegí tu rival IA";
-
-    // seguimos mostrando el header con back porque seguimos en una vista > raíz
     setupHeaderMobile.style.display = "";
-
-    // scrollear arriba
     window.scrollTo({ top: 0, behavior: 'smooth' });
-
-    return; // MUY IMPORTANTE: no hacemos pop real del stack todavía
-  }
-
-  // flujo normal: si no estamos en subpaso interno
-  if (setupViewStack.length <= 1) {
-    // ya estamos en la raíz, nada que volver
     return;
   }
 
-  // sacamos la vista actual
+  if (setupViewStack.length <= 1) {
+    return;
+  }
+
   setupViewStack.pop();
 
-  // mostramos la anterior
   const prevId = setupViewStack[setupViewStack.length - 1];
   const map = {
     "card-mode": cardMode,
+    "card-rules": cardRules,
     "trickSelectCard": trickSelectCard,
     "chillVsCard": chillVsCard,
     "playerCountCard": playerCountCard,
@@ -334,11 +321,12 @@ function renderPlayers() {
     const card = document.createElement('div');
     card.classList.add('player-card');
 
+    // highlight dinámico
     if (!waitingForCopy && idx === currentTurnIndex) {
-      card.classList.add('active');
+      card.classList.add('active', 'blinking-active');
       card.appendChild(buildRoleLabel(false));
     } else if (waitingForCopy && idx === copyTargetIndex) {
-      card.classList.add('copying');
+      card.classList.add('copying', 'blinking-copy');
       card.appendChild(buildRoleLabel(true));
     }
 
@@ -367,7 +355,7 @@ function renderPlayers() {
     nameRow.appendChild(nm);
     nameRow.appendChild(fl);
 
-    // respeto bar
+    // Respeto
     const respectBlock = document.createElement('div');
     respectBlock.classList.add('respect-bar-block');
 
@@ -386,7 +374,7 @@ function renderPlayers() {
     respectBlock.appendChild(labelRow);
     respectBlock.appendChild(bar);
 
-    // letras
+    // letras FINGER
     const lettersRow = document.createElement('div');
     lettersRow.classList.add('letters-row');
     for (let i = 0; i < LETTERS.length; i++) {
@@ -421,14 +409,39 @@ function renderPlayers() {
 // ---------- 3.5 Truco actual ----------
 function renderCurrentTrick() {
   if (!currentTrick) return;
+
+  // título del truco
   trickNameEl.textContent = currentTrick.name;
   trickStyleEl.innerHTML = `<i class="ph ph-lightning"></i> Estilo: ${currentTrick.style}`;
   trickDiffEl.innerHTML = `<i class="ph ph-star"></i> Dificultad: ${currentTrick.difficulty}/5`;
 
+  // info turno
   if (!waitingForCopy) {
-    turnInfoEl.textContent = `Turno de ${players[currentTurnIndex].name} para DEMOSTRAR el truco.`;
+    const callerName = players[currentTurnIndex].name;
+
+    turnInfoBlockEl.classList.remove('copy-mode');
+    turnInfoIconEl.textContent = "▶";
+
+    turnInfoTextEl.innerHTML = `
+      <span class="highlight-name">${callerName}</span>
+      tiene que
+      <span class="highlight-action">DEMOSTRAR</span>
+      el truco.
+    `;
   } else {
-    turnInfoEl.textContent = `${players[copyTargetIndex].name} tiene que COPIAR el truco de ${players[callerIndex].name}.`;
+    const copierName = players[copyTargetIndex].name;
+    const ogName     = players[callerIndex].name;
+
+    turnInfoBlockEl.classList.add('copy-mode');
+    turnInfoIconEl.textContent = "↺";
+
+    turnInfoTextEl.innerHTML = `
+      <span class="highlight-name">${copierName}</span>
+      tiene que
+      <span class="highlight-action">COPIAR</span>
+      a
+      <span class="highlight-name">${ogName}</span>.
+    `;
   }
 }
 
@@ -472,17 +485,42 @@ function endGame(loserIndex) {
   });
 }
 
-// crea jugadores locales base
+// ---------- helpers Respeto rules ----------
+function updatePerkFlagsForCaller(caller) {
+  // reset
+  callerHasFreeRetry = false;
+
+  // Respeto >=100 ⇒ dos intentos extra demostrando, y aunque falle esos dos no se come letra por eso.
+  if (caller.respeto >= 100) {
+    callerHasFreeRetry = true;
+  }
+}
+
+function updatePerkFlagsForCopier(copier) {
+  copierNoLetterBecauseRespect = false;
+  copierDoubleLetter           = false;
+  copierNearDeath              = false;
+
+  if (copier.respeto >= 80) {
+    copierNoLetterBecauseRespect = true;
+  } else if (copier.respeto < 0) {
+    copierNearDeath = true;
+  } else if (copier.respeto <= 20) {
+    copierDoubleLetter = true;
+  }
+}
+
+// crea jugadores locales base (humanos arrancan en Respeto 50)
 function setupLocalPlayers(count) {
   players = [];
   for (let i = 1; i <= count; i++) {
     players.push({
       name: `Jugador ${i}`,
       flag: "🏁",
-      respeto: 70,
+      respeto: 50,
       lettersGiven: 0,
       ia: false,
-      diffLabel: "HUMANO",
+      diffLabel: "Jugador Real",
       setupDesc: "Setup real en mesa. (Foto pendiente)"
     });
   }
@@ -497,12 +535,13 @@ function applyLocalNames(namesArray) {
   }
 }
 
+// humanos vs IA
 function setupIAPlayersWithName(iaChar, humanName) {
   players = [
     {
       name: humanName && humanName.trim() ? humanName.trim() : "Vos",
       flag: "🏁",
-      respeto: 70,
+      respeto: 50, // humano arranca 50
       lettersGiven: 0,
       ia: false,
       diffLabel: "PLAYER",
@@ -511,7 +550,7 @@ function setupIAPlayersWithName(iaChar, humanName) {
     {
       name: iaChar.name,
       flag: iaChar.flag,
-      respeto: iaChar.respetoBase,
+      respeto: iaChar.respetoBase, // IA arranca con su Respeto base
       lettersGiven: 0,
       ia: true,
       diffLabel: iaChar.diffLabel,
@@ -561,6 +600,10 @@ function startNewRound() {
   copyTargetIndex = null;
 
   currentTrick = pickRandomTrick();
+
+  // perks del caller para esta ronda
+  updatePerkFlagsForCaller(players[callerIndex]);
+
   renderCurrentTrick();
   renderPlayers();
 
@@ -573,6 +616,9 @@ function startNewRound() {
   }
 }
 
+// caller intenta su propio truco
+// resultType: "clean" | "sketchy" | "fail"
+// respeta reglas de Respeto 100 (free retries)
 function handleCallerResult(resultType) {
   if (gameOver) return;
   const caller = players[callerIndex];
@@ -586,20 +632,34 @@ function handleCallerResult(resultType) {
     pushLog("Caster", `${caller.name} lo mete medio SKETCHY 😏`);
     pickCopyTarget();
   } else {
-    caller.respeto = Math.max(0, caller.respeto - 15);
+    // falló su propio truco
+    caller.respeto = Math.max(-50, caller.respeto - 15); // limite mínimo por si querés
     pushLog("Caster", `${caller.name} FALLÓ su propio truco 💀`);
+
+    if (callerHasFreeRetry) {
+      // Respeto 100 ⇒ tiene derecho a repetir el truco sin comerse castigo de letra
+      pushLog("Sistema", `${caller.name} tiene Respeto 100: consigue otro intento gratis 👑`);
+      callerHasFreeRetry = false; // le gastamos ese beneficio para este truco
+      return; // no avanzamos turno todavía, repetimos intento caller mismo
+    }
+
     advanceTurnToNextCaller();
   }
 
   renderPlayers();
+  renderCurrentTrick();
 }
 
+// alguien tiene que copiar
 function pickCopyTarget() {
   copyTargetIndex = (callerIndex + 1) % players.length;
   waitingForCopy = true;
 
-  renderCurrentTrick();
+  // perks del que copia en este intento
+  updatePerkFlagsForCopier(players[copyTargetIndex]);
+
   renderPlayers();
+  renderCurrentTrick();
 
   const copier = players[copyTargetIndex];
   if (copier.ia === true) {
@@ -608,10 +668,13 @@ function pickCopyTarget() {
   }
 }
 
+// resultado del que copia
+// aplica perks Respeto>=80, Respeto<=20, Respeto<0
 function handleCopyResult(resultType) {
   if (gameOver) return;
 
   const copier = players[copyTargetIndex];
+
   if (resultType === "clean") {
     copier.respeto = Math.min(100, copier.respeto + 10);
     pushLog("Caster", `${copier.name} iguala LIMPIO. Respeto ++`);
@@ -619,11 +682,46 @@ function handleCopyResult(resultType) {
     copier.respeto = Math.min(100, copier.respeto + 5);
     pushLog("Caster", `${copier.name} iguala SKETCHY. Respeto +`);
   } else {
-    copier.respeto = Math.max(0, copier.respeto - 15);
-    copier.lettersGiven = Math.min(LETTERS.length, copier.lettersGiven + 1);
+    // FALLÓ copiando
+    copier.respeto = Math.max(-50, copier.respeto - 15);
 
-    pushLog("Caster", `${copier.name} FALLÓ la copia. Recibe letra "${LETTERS[copier.lettersGiven-1]}" 💀`);
+    // perk: respeto 80+ => NO se come letra
+    if (copierNoLetterBecauseRespect) {
+      pushLog(
+        "Caster",
+        `${copier.name} FALLÓ copiando pero tiene Respeto alto 🔥. No se come letra.`
+      );
+    } else if (copierNearDeath) {
+      // Respeto negativo => queda automáticamente a una letra de perder
+      // eso significa saltar a lettersGiven = LETTERS.length - 1
+      copier.lettersGiven = Math.max(copier.lettersGiven, LETTERS.length - 1);
+      pushLog(
+        "Caster",
+        `${copier.name} FALLÓ con Respeto negativo 😬. Queda a UNA letra de perder.`
+      );
+    } else {
+      // normal -> se come letras
+      let lettersToEat = 1;
+      if (copierDoubleLetter) {
+        lettersToEat = 2;
+        pushLog(
+          "Caster",
+          `${copier.name} FALLÓ con Respeto bajo. Se come 2 letras 💀💀`
+        );
+      } else {
+        pushLog(
+          "Caster",
+          `${copier.name} FALLÓ la copia. Recibe letra. 💀`
+        );
+      }
 
+      copier.lettersGiven = Math.min(
+        LETTERS.length,
+        copier.lettersGiven + lettersToEat
+      );
+    }
+
+    // check derrota
     if (copier.lettersGiven >= LETTERS.length) {
       endGame(copyTargetIndex);
       return;
@@ -631,6 +729,7 @@ function handleCopyResult(resultType) {
   }
 
   renderPlayers();
+  renderCurrentTrick();
   advanceTurnToNextCaller();
 }
 
@@ -648,7 +747,7 @@ function advanceTurnToNextCaller() {
   5. SETUP FLOW (ELECCIÓN DE MODO, JUGADORES, IA, ETC)
 ========================================================== */
 
-// ----- 5.1 elegir modo (card-mode) -----
+// elegir modo
 document.querySelectorAll('.mode-select').forEach(btn => {
   btn.addEventListener('click', () => {
     if (gameOver) return;
@@ -658,22 +757,22 @@ document.querySelectorAll('.mode-select').forEach(btn => {
     chillOpponentMode = null;
     updateModeBadge();
 
-    // reset setup runtime
+    // reset runtime setup
     players = [];
     currentIA = null;
     pendingHumanName = "";
     customTricks = [];
 
-    // ⚠️ IMPORTANTE:
-    // si el stack está vacío o no tiene todavía la raíz "card-mode",
-    // la ponemos primero para que luego siempre haya a dónde volver.
+    // asegurar raíz del stack
     if (setupViewStack.length === 0) {
+      // arrancamos con card-mode en el stack. NO metemos card-rules acá porque
+      // las reglas no forman parte del flow de pasos posteriores.
       setupViewStack = ["card-mode"];
     } else if (setupViewStack[0] !== "card-mode") {
       setupViewStack.unshift("card-mode");
     }
 
-    // limpiamos contenido dinámico
+    // limpiar dinámico
     playersNamesWrapper.classList.add('hidden');
     yourNameWrapper.classList.add('hidden');
     startMatchCard.classList.add('hidden');
@@ -682,15 +781,13 @@ document.querySelectorAll('.mode-select').forEach(btn => {
     playerNamesFields.innerHTML = "";
     yourNameInput.value = "";
 
-    // según el modo vamos al siguiente paso y lo pusheamos,
-    // esto hace que el stack quede con 2 items -> header visible
+    // ahora, al movernos al siguiente paso real,
+    // ya no mostramos cardRules
     if (mode === "local") {
       pushSetupView(playerCountCard, "Jugadores");
-
     } else if (mode === "ia") {
       renderIARoster();
       pushSetupView(iaSelectCard, "Elegí tu rival IA");
-
     } else if (mode === "chill") {
       renderTrickChecklist();
       pushSetupView(trickSelectCard, "Elegí tus trucos");
@@ -698,7 +795,7 @@ document.querySelectorAll('.mode-select').forEach(btn => {
   });
 });
 
-// ----- 5.2 checklist chill -----
+// checklist chill
 function renderTrickChecklist() {
   trickSelectList.innerHTML = "";
   trickPool.forEach((trick, idx) => {
@@ -738,11 +835,11 @@ confirmTricksBtn.addEventListener('click', () => {
   pushSetupView(chillVsCard, "¿Contra quién?");
 });
 
-// ----- 5.3 chill vs local / vs IA -----
+// chill vs local / vs IA
 chillVsLocalBtn.addEventListener('click', () => {
   if (gameOver) return;
   chillOpponentMode = "local";
-  pushLog("Sistema", "Modo Chill vs humanos 🔥");
+  pushLog("Sistema", "Modo Chill vs Jugadores 🔥");
   updateModeBadge();
 
   pushSetupView(playerCountCard, "Jugadores");
@@ -758,7 +855,7 @@ chillVsIABtn.addEventListener('click', () => {
   pushSetupView(iaSelectCard, "Elegí tu rival IA");
 });
 
-// ----- 5.4 jugadores locales -----
+// jugadores locales
 confirmPlayerCountBtn.addEventListener('click', () => {
   if (gameOver) return;
 
@@ -769,7 +866,6 @@ confirmPlayerCountBtn.addEventListener('click', () => {
   setupLocalPlayers(count);
   pushLog("Sistema", `Partida ${gameMode === "chill" ? "Chill" : "local"} con ${count} jugadores base.`);
 
-  // generar campos nombre
   playerNamesFields.innerHTML = "";
   for (let i = 0; i < players.length; i++) {
     const wrapper = document.createElement('div');
@@ -792,7 +888,7 @@ confirmPlayerCountBtn.addEventListener('click', () => {
 
   playersNamesWrapper.classList.remove('hidden');
 
-  // subpaso dentro de la MISMA card, así que no pusheamos vista nueva
+  // subpaso dentro de la MISMA card
   forceHeader("Nombres de jugadores");
 });
 
@@ -809,7 +905,7 @@ confirmNamesBtn.addEventListener('click', () => {
   pushSetupView(startMatchCard, "Listo para empezar");
 });
 
-// ----- 5.5 elegir IA -----
+// elegir IA
 function renderIARoster() {
   iaRosterDiv.innerHTML = "";
   iaRosterData.forEach((iaChar) => {
@@ -848,53 +944,43 @@ function renderIARoster() {
     selectBtn.classList.add('btn-ia-select');
     selectBtn.textContent = "Elegir oponente";
 
-   selectBtn.addEventListener('click', () => {
-  if (gameOver) return;
+    selectBtn.addEventListener('click', () => {
+      if (gameOver) return;
 
-  currentIA = iaChar;
-  updateModeBadge();
+      currentIA = iaChar;
+      updateModeBadge();
 
-  pushLog(
-    "Sistema",
-    `Vas a jugar contra ${iaChar.name} (${iaChar.flag}). Respeto base ${iaChar.respetoBase}.`
-  );
+      pushLog(
+        "Sistema",
+        `Vas a jugar contra ${iaChar.name} (${iaChar.flag}). Respeto base ${iaChar.respetoBase}.`
+      );
 
-  // marcamos que entramos al SUBPASO "tu nombre"
-  inIASubstepName = true;
+      inIASubstepName = true;
 
-  // animación de salida del roster IA
-  iaRosterDiv.style.transition = "all 0.4s ease";
-  iaRosterDiv.style.opacity = "0";
-  iaRosterDiv.style.transform = "scale(0.97)";
+      iaRosterDiv.style.transition = "all 0.4s ease";
+      iaRosterDiv.style.opacity = "0";
+      iaRosterDiv.style.transform = "scale(0.97)";
 
-  setTimeout(() => {
-    // oculto roster
-    iaRosterDiv.classList.add('hidden');
+      setTimeout(() => {
+        iaRosterDiv.classList.add('hidden');
 
-    // muestro formulario de tu nombre
-    yourNameWrapper.classList.remove('hidden');
-    yourNameWrapper.style.opacity = "0";
+        yourNameWrapper.classList.remove('hidden');
+        yourNameWrapper.style.opacity = "0";
 
-    setTimeout(() => {
-      yourNameWrapper.style.transition = "opacity 0.4s ease";
-      yourNameWrapper.style.opacity = "1";
+        setTimeout(() => {
+          yourNameWrapper.style.transition = "opacity 0.4s ease";
+          yourNameWrapper.style.opacity = "1";
 
-      if (yourNameInput) yourNameInput.focus();
+          if (yourNameInput) yourNameInput.focus();
 
-      // header ahora dice "Tu nombre"
-      forceHeader("Tu nombre");
+          forceHeader("Tu nombre");
+          setupHeaderMobile.style.display = "";
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }, 50);
+      }, 400);
 
-      // IMPORTANTE: dejamos el header visible (porque no estamos en la raíz)
-      setupHeaderMobile.style.display = "";
-
-      // scrolleo arriba
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, 50);
-  }, 400);
-
-  startMatchCard.classList.add('hidden');
-});
-
+      startMatchCard.classList.add('hidden');
+    });
 
     card.appendChild(header);
     card.appendChild(stats);
@@ -921,7 +1007,7 @@ confirmYourNameBtn.addEventListener('click', () => {
 });
 
 
-// ----- 5.6 INICIAR PARTIDA -----
+// iniciar partida
 startMatchBtn.addEventListener('click', () => {
   if (gameOver) return;
 
@@ -934,7 +1020,6 @@ startMatchBtn.addEventListener('click', () => {
   renderCurrentTrick();
   updateModeBadge();
 
-  // aseguramos scroll arriba al entrar al game
   window.scrollTo({ top: 0, behavior: 'instant' });
 });
 
@@ -974,8 +1059,19 @@ btnFail.addEventListener('click', () => {
 /* ==========================================================
   BOOT
 ========================================================== */
+
+// primer log info
 pushLog("Sistema", "Fingerblade listo. Elegí modo para empezar.");
-// estado inicial del wizard stack -> pantalla raíz
+
+// estado inicial del wizard stack -> pantalla raíz del setup
 setupViewStack = ["card-mode"];
-showSetupView(cardMode, "Elegí modo");
+
+// Al boot queremos que se vean card-mode Y las reglas.
+// Para eso: mostramos card-mode, sacamos hidden a cardRules manualmente:
+hideAllSetupCards();
+cardMode.classList.remove('hidden');
+if (cardRules) cardRules.classList.remove('hidden');
+
+setupHeaderMobile.style.display = "none";
+setupStepLabel.textContent = "Setup";
 updateModeBadge();
