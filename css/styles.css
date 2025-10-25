@@ -2053,3 +2053,265 @@ body {
   color: var(--text-dim);
   list-style: disc;
 }
+
+
+/* antes tenías .logo-placeholder, ahora: */
+.logo-img-wrapper {
+    width: 40px;         /* mismo ancho que el cuadrado que usabas */
+    height: 40px;        /* mismo alto */
+    border-radius: 8px;  /* mismo round si ya tenías */
+    background: radial-gradient(circle at 30% 30%, #2b2b42 0%, #0a0a12 70%);
+    box-shadow: 0 0 16px rgba(124, 74, 255, 0.6); /* lo que ya venías usando para el glow */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;    /* importante para que la imagen no se salga */
+}
+
+.logo-img-wrapper img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain; /* mantiene proporción del logo */
+}
+
+
+/* --- Splash inicial estilo videojuego --- */
+.splash-screen {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at 50% 30%, rgba(80,80,120,.4) 0%, rgba(0,0,10,1) 70%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999; /* por encima de todo */
+    opacity: 1;
+    transition: opacity .5s ease; /* fade out */
+    pointer-events: none; /* para que no bloquee toques después del fade */
+    font-family: var(--font-title, 'Chakra Petch', system-ui);
+}
+
+.splash-screen.is-hidden {
+    opacity: 0;
+}
+
+/* contenido interno */
+.splash-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    text-align: center;
+
+    animation: splash-pop 1.2s ease forwards;
+}
+
+/* caja del logo grande */
+.splash-logo {
+    width: 96px;
+    height: 96px;
+    border-radius: 16px;
+    background: radial-gradient(circle at 30% 30%, #2b2b42 0%, #0a0a12 70%);
+    box-shadow:
+        0 0 30px rgba(124, 74, 255, .6),
+        0 0 80px rgba(0, 255, 128, .3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,.12);
+}
+
+.splash-logo img {
+    max-width: 80%;
+    max-height: 80%;
+    object-fit: contain;
+    filter: drop-shadow(0 0 8px rgba(0,255,128,.6));
+}
+
+/* textito "INICIANDO ARENA..." */
+.splash-subtitle {
+    font-size: .8rem;
+    letter-spacing: .08em;
+    color: rgba(0,255,128,.8);
+    text-shadow: 0 0 8px rgba(0,255,128,.5);
+    animation: subtitle-blink 1s infinite steps(2, start);
+}
+
+/* animación de aparición tipo pulso */
+@keyframes splash-pop {
+    0% {
+        transform: scale(.6);
+        opacity: 0;
+        filter: blur(6px);
+    }
+    40% {
+        transform: scale(1.05);
+        opacity: 1;
+        filter: blur(0px);
+    }
+    70% {
+        transform: scale(1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* parpadeo retro del "loading" */
+@keyframes subtitle-blink {
+    0%   { opacity: 1; }
+    50%  { opacity: .3; }
+    100% { opacity: 1; }
+}
+
+/* --- Splash inicial estilo videojuego --- */
+.splash-logo {
+    width: 180px;           /* antes 96px */
+    height: 180px;          /* antes 96px */
+    border-radius: 24px;
+    background: radial-gradient(circle at 30% 30%, #2b2b42 0%, #0a0a12 70%);
+    box-shadow:
+        0 0 50px rgba(124, 74, 255, .6),
+        0 0 120px rgba(0, 255, 128, .4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,.12);
+}
+
+.splash-logo img {
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+    filter: drop-shadow(0 0 10px rgba(0,255,128,.8));
+}
+
+
+.splash-screen.is-hidden {
+    opacity: 0;
+    transform: scale(1.1);
+    transition: opacity .6s ease, transform .8s ease;
+}
+
+/* logo del splash más grande y con esquinas suaves */
+.splash-logo {
+    width: 180px;
+    height: 180px;
+    border-radius: 28px; /* <--- más redondeado */
+    background: radial-gradient(circle at 30% 30%, #2b2b42 0%, #0a0a12 70%);
+    box-shadow:
+        0 0 50px rgba(124, 74, 255, .6),
+        0 0 120px rgba(0, 255, 128, .4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,.12);
+    animation: logo-glow 2s ease-in-out infinite alternate;
+}
+
+.splash-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 28px; /* <--- redondeo interno real de la imagen */
+    filter: drop-shadow(0 0 12px rgba(0,255,128,.6));
+}
+
+/* animación suave del glow */
+@keyframes logo-glow {
+    0% { box-shadow: 0 0 40px rgba(124,74,255,.6), 0 0 100px rgba(0,255,128,.4); }
+    100% { box-shadow: 0 0 80px rgba(124,74,255,.8), 0 0 160px rgba(0,255,128,.6); }
+}
+
+/* hint "tocar para entrar" */
+.splash-tap-hint {
+    margin-top: .75rem;
+    font-size: .8rem;
+    font-family: var(--font-ui, 'Inter', system-ui, sans-serif);
+    color: rgba(255,255,255,0.6);
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    animation: tapBlink 1.2s ease-in-out infinite;
+    user-select: none;
+    pointer-events: none;
+}
+
+@keyframes tapBlink {
+    0%   { opacity: 0.4; }
+    50%  { opacity: 1;   }
+    100% { opacity: 0.4; }
+}
+
+/* asegurar que el splash tapa todo hasta que nosotros lo saquemos */
+.splash-screen {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at 20% 20%, rgba(123, 21, 255, 0.15) 0%, rgba(0,0,0,0) 70%), rgba(5,5,10,0.95);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    transition: opacity .5s ease, transform .5s ease;
+    pointer-events: all;
+
+}
+
+.splash-screen.is-hidden {
+    opacity: 0;
+    transform: scale(0.96);
+    pointer-events: none;
+}
+
+.splash-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.splash-logo {
+    width: clamp(140px, 40vw, 220px); /* logo grandote */
+    height: clamp(140px, 40vw, 220px);
+    border-radius: 1.25rem;
+    background: radial-gradient(circle at 50% 30%, rgba(0,255,160,0.25) 0%, rgba(0,0,0,0) 70%), rgba(20,20,30,0.6);
+    box-shadow:
+        0 20px 60px rgba(0,255,160,0.25),
+        0 4px 16px rgba(0,0,0,0.8),
+        0 0 20px rgba(0,255,160,0.4) inset;
+    border: 1px solid rgba(0,255,160,0.4);
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+}
+
+.splash-logo img {
+    max-width: 80%;
+    max-height: 80%;
+    object-fit: contain;
+    border-radius: 1rem; /* esquinas redondeadas de la img dentro */
+}
+
+.splash-subtitle {
+    margin-top: 1rem;
+    font-size: .8rem;
+    font-family: var(--font-title, 'Chakra Petch', system-ui, sans-serif);
+    font-weight: 600;
+    letter-spacing: .05em;
+    color: rgb(0,255,160);
+    text-shadow: 0 0 8px rgba(0,255,160,0.75);
+    text-transform: uppercase;
+    user-select: none;
+}
+
+.app-wrapper {
+  pointer-events: none;
+}
+.splash-screen.is-hidden ~ .app-wrapper {
+  pointer-events: all;
+}
