@@ -23,34 +23,52 @@
 
 <body>
 
+<div class="splash-screen" id="splashScreen">
+    <div class="splash-inner">
+        <div class="splash-logo">
+            <img src="imagenes/LOGO.png" alt="Fingerblade Logo">
+        </div>
+        <div class="splash-subtitle" id="splashSubtitle">INICIANDO ARENA...</div>
+        <div class="splash-tap-hint" id="splashTapHint">tocar para entrar</div>
+    </div>
+</div>
+
+
+
+
     <div class="app-wrapper">
 
         <!-- =========================================================
          HEADER / BRAND (siempre visible arriba)
         ========================================================== -->
-        <header class="app-header" data-aos="fade-down">
-            <div class="brand-block">
-                <div class="brand-logo">
-                    <div class="logo-placeholder">FB</div>
-                </div>
-                <div class="brand-text">
-                    <h1 class="brand-title">FINGERBLADE</h1>
-                    <p class="brand-sub">TRICKBATTLE ARENA</p>
-                </div>
+       <header class="app-header" data-aos="fade-down">
+    <div class="brand-block">
+        <div class="brand-logo">
+            <!-- reemplazo del placeholder "FB" por tu logo real -->
+            <div class="logo-img-wrapper">
+                <img src="imagenes/LOGO.png" alt="Fingerblade Logo">
             </div>
+        </div>
 
-            <div class="match-info-top">
-                <div class="arena-badge">
-                    <i class="ph ph-flame"></i>
-                    <span id="arenaName">Arena: Kitchen Counter</span>
-                </div>
+        <div class="brand-text">
+            <h1 class="brand-title">FINGERBLADE</h1>
+            <p class="brand-sub">TRICKBATTLE ARENA</p>
+        </div>
+    </div>
 
-                <div class="mode-badge" id="modeBadge">
-                    <i class="ph ph-swords"></i>
-                    <span>Sin partida</span>
-                </div>
-            </div>
-        </header>
+    <div class="match-info-top">
+        <div class="arena-badge">
+            <i class="ph ph-flame"></i>
+            <span id="arenaName">Arena: Coliseo SkatePark</span>
+        </div>
+
+        <div class="mode-badge" id="modeBadge">
+            <i class="ph ph-swords"></i>
+            <span>Sin partida</span>
+        </div>
+    </div>
+</header>
+
 
         <!-- =========================================================
          HEADER DE SETUP MOBILE (barra con "Volver" y paso actual)
@@ -425,13 +443,86 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="js/game.js"></script>
 
-    <script>
-        AOS.init({
-            once: true,
-            duration: 600,
-            easing: 'ease-out-cubic'
-        });
-    </script>
+<script>
+AOS.init({
+  once: true,
+  duration: 600,
+  easing: 'ease-out-cubic'
+});
+
+window.addEventListener('load', () => {
+  const splash        = document.getElementById('splashScreen');
+  const subtitleEl    = document.getElementById('splashSubtitle');
+  const tapHintEl     = document.getElementById('splashTapHint');
+  const logoEl        = splash.querySelector('.splash-logo');
+  const appWrapper    = document.querySelector('.app-wrapper');
+
+  // bloquea clicks al contenido hasta cerrar splash
+  appWrapper.style.pointerEvents = 'none';
+
+  // mensajes arcade random
+  const mensajes = [
+    "Cargando Respeto...",
+    "Sincronizando Trucks...",
+    "Barriendo Coliseo SkatePark...",
+    "Afilando Trucks...",
+    "Listo para humillar..."
+  ];
+  subtitleEl.textContent = mensajes[Math.floor(Math.random() * mensajes.length)];
+
+  // sonido de inicio
+  const whoosh = new Audio("imagenes/mixkit-metal-hit-woosh-1485.wav");
+  whoosh.volume = 0.8;
+  whoosh.preload = "auto";
+
+  let splashClosed = false;
+
+  async function handleFirstTap(e) {
+    e.preventDefault(); // evita que pase el click al menú
+    if (splashClosed) return;
+
+    try {
+      whoosh.currentTime = 0;
+      await whoosh.play();
+    } catch (err) {
+      console.warn("no se pudo reproducir audio aún:", err);
+    }
+
+    // animación visual del logo
+    logoEl.animate(
+      [
+        { transform: 'scale(1)', filter: 'brightness(1)' },
+        { transform: 'scale(1.2)', filter: 'brightness(1.4)' },
+        { transform: 'scale(0.9)', filter: 'brightness(0.9)' },
+        { transform: 'scale(1)', filter: 'brightness(1)' }
+      ],
+      { duration: 600, easing: 'ease-out' }
+    );
+
+    subtitleEl.textContent = "Entrando...";
+    tapHintEl.style.opacity = "0";
+
+    // fade out suave
+    splash.classList.add('is-hidden');
+    splashClosed = true;
+
+    setTimeout(() => {
+      splash.remove();
+      appWrapper.style.pointerEvents = 'all'; // reactiva clicks al juego
+    }, 700);
+
+    window.removeEventListener('pointerdown', handleFirstTap);
+  }
+
+  window.addEventListener('pointerdown', handleFirstTap);
+});
+</script>
+
+
+
+
+
+
 
 </body>
 
