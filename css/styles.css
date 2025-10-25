@@ -1461,3 +1461,165 @@ body {
   font-size: .8rem;
   font-weight: 600;
 }
+
+/* ===============================
+   OPTIMIZACIÓN DESKTOP - GAME AREA
+   =============================== */
+
+@media (min-width: 1024px) {
+
+  /* --- Estructura general del juego --- */
+  .game-area {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr; /* tablero izquierda / panel derecha */
+    align-items: start;
+    gap: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding-top: 2rem;
+  }
+
+  /* --- Jugadores uno al lado del otro --- */
+  .players-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .player-card {
+    transform: scale(1.02);
+    transition: transform 0.2s ease;
+  }
+
+  .player-card:hover {
+    transform: scale(1.05);
+  }
+
+  /* --- Panel de truco + acciones + log en columna derecha --- */
+  .battle-zone {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .current-trick.card,
+  .action-panel.card,
+  .match-log.card {
+    width: 100%;
+  }
+
+  /* --- Log más alto y con scroll suave --- */
+  .log-feed {
+    max-height: 280px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+  }
+
+  /* --- Ajustes visuales generales --- */
+  .app-wrapper {
+    padding: 2.5rem;
+  }
+
+  .app-header {
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .match-info-top {
+    align-items: flex-start;
+  }
+}
+
+
+/* ====== ACTION PANEL REFINADO ====== */
+
+/* Contenedor del bloque de botones */
+.action-buttons {
+  display: flex;
+  flex-direction: row;       /* siempre en fila */
+  gap: 0;                    /* sin gap entre opciones, que parezcan una sola barra */
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: var(--radius-sm);
+  overflow: hidden;          /* para que los bordes redondeados corten bien */
+  box-shadow: 0 24px 60px rgba(0,0,0,.9);
+  background: rgba(0,0,0,.4);
+}
+
+/* Cada botón es ahora una "columna" flexible dentro de la barra */
+.action-btn {
+  flex: 1;
+  min-width: 0;
+  border: 0;                           /* sacamos el borde propio */
+  border-right: 1px solid rgba(255,255,255,.07); /* divisor vertical */
+  background: transparent;
+  text-align: center;
+  font-family: var(--font-title);
+  font-size: var(--font-size-sm);
+  line-height: 1.2;
+  font-weight: 600;
+  padding: 1rem .75rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: .4rem;
+  cursor: pointer;
+}
+
+/* sacamos el divisor en el último */
+.action-btn:last-child {
+  border-right: 0;
+}
+
+/* Estado por tipo, usamos solo color de texto + glow leve */
+.action-btn.clean {
+  color: var(--accent-2);
+  text-shadow: 0 0 8px rgba(0,255,169,.6);
+}
+.action-btn.sketchy {
+  color: var(--accent-warn);
+  text-shadow: 0 0 8px rgba(255,204,0,.5);
+}
+.action-btn.fail {
+  color: var(--accent-danger);
+  text-shadow: 0 0 8px rgba(255,79,106,.5);
+}
+
+/* Hover desktop, feedback lindo */
+@media (hover:hover) {
+  .action-btn.clean:hover {
+    background: radial-gradient(circle at 50% 0%, rgba(0,255,169,.12) 0%, rgba(0,0,0,0) 70%);
+  }
+  .action-btn.sketchy:hover {
+    background: radial-gradient(circle at 50% 0%, rgba(255,204,0,.12) 0%, rgba(0,0,0,0) 70%);
+  }
+  .action-btn.fail:hover {
+    background: radial-gradient(circle at 50% 0%, rgba(255,79,106,.12) 0%, rgba(0,0,0,0) 70%);
+  }
+}
+
+/* Iconito + label dentro de cada botón:
+   - Hacemos que el ícono sea chico y arriba
+   - El texto principal más fuerte abajo */
+.action-btn i {
+  font-size: .9rem;
+  line-height: 1;
+  font-weight: 400;
+  opacity: .9;
+}
+
+.action-btn span {
+  font-size: var(--font-size-xs);
+  line-height: 1.2;
+  font-weight: 600;
+  letter-spacing: -.02em;
+  text-transform: uppercase;
+}
+
+/* Texto del hint debajo del bloque */
+.action-hint {
+  margin-top: .75rem;
+  font-size: var(--font-size-2xs, .7rem);
+  line-height: 1.4;
+  color: var(--text-dim);
+  text-align: center;
+}
