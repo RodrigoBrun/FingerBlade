@@ -27,7 +27,7 @@
 
         <!-- =========================================================
          HEADER / BRAND (siempre visible arriba)
-    ========================================================== -->
+        ========================================================== -->
         <header class="app-header" data-aos="fade-down">
             <div class="brand-block">
                 <div class="brand-logo">
@@ -57,7 +57,7 @@
          - El JS la muestra / oculta dinámicamente
          - Por defecto puede estar display:none en CSS (en desktop) y flex en mobile
            pero SIN inline style acá (esto es importante)
-    ========================================================== -->
+        ========================================================== -->
         <div class="setup-header-mobile" id="setupHeaderMobile">
             <button class="back-btn" id="backBtn">
                 <i class="ph ph-arrow-left"></i>
@@ -68,7 +68,7 @@
 
         <!-- =========================================================
          SETUP SCREEN (pantallas previas a empezar la batalla)
-    ========================================================== -->
+        ========================================================== -->
         <section class="setup-screen" id="setupScreen">
 
             <!-- Paso 1: Elegir tipo de partida -->
@@ -96,6 +96,140 @@
                     </button>
                 </div>
             </div>
+
+
+            <!-- GUÍA / REGLAS -->
+            <div class="card card-rules" id="card-rules" data-aos="zoom-in">
+                <h2 class="card-title">
+                    <i class="ph ph-book-open-text"></i>
+                    Cómo se juega
+                </h2>
+
+                <div class="rules-section">
+                    <div class="rule-row">
+                        <div class="rule-icon"><i class="ph ph-play-circle"></i></div>
+                        <div class="rule-text">
+                            <div class="rule-head">1. Llamar el truco</div>
+                            <div class="rule-desc">En pantalla se muestra el truco que deberá ser realizado. Si lo cae, el resto tiene que copiar.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="rule-row">
+                        <div class="rule-icon"><i class="ph ph-copy"></i></div>
+                        <div class="rule-text">
+                            <div class="rule-head">2. Copiar o comerte letra</div>
+                            <div class="rule-desc">
+                                Si te toca copiar y fallás, te comés una letra de
+                                <span class="rule-word">FINGER</span>. Si juntás todas las letras -> perdiste.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="rule-row">
+                        <div class="rule-icon"><i class="ph ph-gauge"></i></div>
+                        <div class="rule-text">
+                            <div class="rule-head">3. Respeto (tu barra verde)</div>
+                            <div class="rule-desc">
+                                El Respeto sube cuando metés trucos y baja cuando fallás feo.
+                                El Respeto te da perks durante la batalla (mirá abajo).
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="rule-row">
+                        <div class="rule-icon"><i class="ph ph-sword"></i></div>
+                        <div class="rule-text">
+                            <div class="rule-head">4. Turnos</div>
+                            <div class="rule-desc">
+                                El turno va rotando jugador por jugador. Siempre hay alguien
+                                <span class="inline-badge demo">demostrando</span>
+                                y alguien
+                                <span class="inline-badge copy">copiando</span>.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="rule-row">
+                        <div class="rule-icon"><i class="ph ph-skull"></i></div>
+                        <div class="rule-text">
+                            <div class="rule-head">5. Eliminación</div>
+                            <div class="rule-desc">
+                                Cuando un jugador completa la palabra <span class="rule-word">FINGER</span>, queda OUT.
+                                Último vivo gana 🏆.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rules-perks">
+                    <div class="perks-title">
+                        <i class="ph ph-lightning"></i>
+                        Ventajas / Castigos del Respeto
+                    </div>
+
+                    <ul class="perks-list">
+                        <li>
+                            <span class="perk-badge high">Respeto 80+</span>
+                            <span class="perk-desc">
+                                Si fallás copiando, NO te comés letra. Sos demasiado respetado para que te humillen tan
+                                fácil 😎
+                            </span>
+                        </li>
+
+                        <li>
+                            <span class="perk-badge god">Respeto 100</span>
+                            <span class="perk-desc">
+                                Tenés derecho a dos intentos extra cuando demostrás un truco.
+                                Aunque falles los dos, no perdés letra por ese truco.
+                            </span>
+                        </li>
+
+                        <li>
+                            <span class="perk-badge low">Respeto bajo (0-20)</span>
+                            <span class="perk-desc">
+                                Fallaste? Te comés <strong>2 letras</strong> de una. La gente te está mirando raro, bro
+                                💀
+                            </span>
+                        </li>
+
+                        <li>
+                            <span class="perk-badge minus">Respeto negativo</span>
+                            <span class="perk-desc">
+                                Si fallás copiando, quedás automáticamente a <strong>una letra</strong> de perder.
+                                Sos meme vivo.
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="rules-tips">
+                    <div class="tips-title">
+                        <i class="ph ph-target"></i>
+                        Tips para ganar
+                    </div>
+
+                    <ul class="tips-list">
+                        <li>
+                            Hacé trucos que vos metés siempre, no los más locos. Acumula Respeto rápido y volvete
+                            intocable.
+                        </li>
+                        <li>
+                            Cuando el otro está con Respeto bajo: llamale algo técnico. Si falla, se come 2 letras de
+                            una.
+                        </li>
+                        <li>
+                            Si vos tenés Respeto alto, podés arriesgar trucos más caros:
+                            literalmente no te castigan igual.
+                        </li>
+                        <li>
+                            Última ronda? Llama algo que el rival odia. Tu trabajo es darle letras, no impresionar a
+                            YouTube.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
 
             <!-- Paso 1.5 (solo modo chill): elegir trucos -->
             <div class="card card-tricks hidden" id="trickSelectCard" data-aos="zoom-in">
@@ -202,7 +336,7 @@
 
         <!-- =========================================================
          GAME SCREEN (scoreboard + acción + log caster)
-    ========================================================== -->
+        ========================================================== -->
         <main class="game-area hidden" id="gameArea">
 
             <!-- SCOREBOARD -->
@@ -224,8 +358,19 @@
                         <div class="meta-chip" id="trickDiff"><i class="ph ph-star"></i> Dificultad: -</div>
                     </div>
 
-                    <div class="turn-info" id="turnInfo">
-                        <!-- JS pone: "Turno de PLAYER X para DEMOSTRAR" / "X tiene que COPIAR a Y" -->
+                    <!-- BLOQUE DE INFO DE TURNO (NUEVO) -->
+                    <div class="turn-info-block" id="turnInfoBlock">
+                        <div class="turn-info-icon" id="turnInfoIcon">GO</div>
+                        <div class="turn-info-text" id="turnInfoText">
+                            <!-- JS pone acá:
+                                 <span class="highlight-name">Jugador 1</span> tiene que
+                                 <span class="highlight-action">DEMOSTRAR</span> el truco.
+                                 ó
+                                 <span class="highlight-name">Jugador 2</span> tiene que
+                                 <span class="highlight-action">COPIAR</span> a
+                                 <span class="highlight-name">Jugador 1</span>.
+                            -->
+                        </div>
                     </div>
                 </div>
 
@@ -253,7 +398,6 @@
                     <p class="action-hint">Esto afecta Respeto y puede dar letras al rival.</p>
                 </div>
 
-
                 <!-- MATCH LOG -->
                 <div class="match-log card" data-aos="zoom-in">
                     <h3 class="panel-title"><i class="ph ph-chat-centered-dots"></i> Log de la batalla</h3>
@@ -268,7 +412,7 @@
 
         <!-- =========================================================
          FOOTER
-    ========================================================== -->
+        ========================================================== -->
         <footer class="app-footer">
             <p>Fingerblade Alpha • v 1.0.0 • <span class="accent">By Rodri</span></p>
         </footer>
@@ -277,7 +421,7 @@
 
     <!-- =========================================================
        LIBS + GAME LOGIC
-  ========================================================== -->
+    ========================================================== -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="js/game.js"></script>
 
