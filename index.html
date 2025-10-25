@@ -21,16 +21,17 @@
 
   <div class="app-wrapper">
 
-    <!-- HEADER / BRAND -->
+    <!-- =========================================================
+         HEADER / BRAND (siempre visible arriba)
+    ========================================================== -->
     <header class="app-header" data-aos="fade-down">
       <div class="brand-block">
         <div class="brand-logo">
-          <!-- ACA VA LOGO FUTURO DEL JUEGO (IMAGEN SVG/PNG) -->
           <div class="logo-placeholder">FB</div>
         </div>
         <div class="brand-text">
           <h1 class="brand-title">FINGERBLADE</h1>
-          <p class="brand-sub">TrickBattle Arena</p>
+          <p class="brand-sub">TRICKBATTLE ARENA</p>
         </div>
       </div>
 
@@ -39,6 +40,7 @@
           <i class="ph ph-flame"></i>
           <span id="arenaName">Arena: Kitchen Counter</span>
         </div>
+
         <div class="mode-badge" id="modeBadge">
           <i class="ph ph-swords"></i>
           <span>Sin partida</span>
@@ -46,12 +48,30 @@
       </div>
     </header>
 
-    <!-- SETUP SCREEN -->
+    <!-- =========================================================
+         HEADER DE SETUP MOBILE (barra con "Volver" y paso actual)
+         - El JS la muestra / oculta dinámicamente
+         - Por defecto puede estar display:none en CSS (en desktop) y flex en mobile
+           pero SIN inline style acá (esto es importante)
+    ========================================================== -->
+    <div class="setup-header-mobile" id="setupHeaderMobile">
+      <button class="back-btn" id="backBtn">
+        <i class="ph ph-arrow-left"></i>
+        <span>Volver</span>
+      </button>
+      <div class="setup-step-label" id="setupStepLabel">Setup</div>
+    </div>
+
+    <!-- =========================================================
+         SETUP SCREEN (pantallas previas a empezar la batalla)
+    ========================================================== -->
     <section class="setup-screen" id="setupScreen">
 
       <!-- Paso 1: Elegir tipo de partida -->
-      <div class="card card-mode" data-aos="zoom-in">
+      <!-- IMPORTANTE: este card es la raíz del flujo -> id="card-mode" para el stack -->
+      <div class="card card-mode" id="card-mode" data-aos="zoom-in">
         <h2 class="card-title"><i class="ph ph-game-controller"></i> Tipo de partida</h2>
+
         <div class="mode-options">
           <button class="btn mode-select" data-mode="local">
             <i class="ph ph-users-three"></i>
@@ -65,7 +85,6 @@
             <small>Desafío 1v1 contra personajes</small>
           </button>
 
-          <!-- NUEVO: modo chill -->
           <button class="btn mode-select" data-mode="chill">
             <i class="ph ph-coffee"></i>
             <span>Modo Chill</span>
@@ -74,23 +93,13 @@
         </div>
       </div>
 
-      <!-- Paso 1.5 (solo modo chill): elegir trucos permitidos -->
+      <!-- Paso 1.5 (solo modo chill): elegir trucos -->
       <div class="card card-tricks hidden" id="trickSelectCard" data-aos="zoom-in">
         <h2 class="card-title"><i class="ph ph-check-square-offset"></i> Elegí tus trucos</h2>
-        <p class="card-desc">Marcá solo los trucos con los que te sentís cómodo. La batalla va a usar SOLO estos.</p>
+        <p class="card-desc">Marcá solo los trucos con los que te sentís cómodo. La batalla va a usar SOLO esos.</p>
 
         <div class="trick-select-list" id="trickSelectList">
-          <!-- JS va a inyectar opciones tipo checkbox:
-            <label class="trick-option">
-              <div style="display:flex;align-items:flex-start;gap:.5rem;">
-                <input type="checkbox" class="trick-check" data-index="0" checked />
-                <div>
-                  <div class="main">Kickflip</div>
-                  <div class="meta">Flip · Dificultad 2/5</div>
-                </div>
-              </div>
-            </label>
-          -->
+          <!-- JS inyecta opciones tipo checkbox -->
         </div>
 
         <button class="btn btn-confirm" id="confirmTricksBtn">
@@ -99,12 +108,10 @@
         </button>
       </div>
 
-      <!-- Paso 1.5b (solo modo chill): elegir contra quién jugás -->
+      <!-- Paso 1.5b (solo modo chill): ¿Contra quién jugás? -->
       <div class="card card-chill-vs hidden" id="chillVsCard" data-aos="zoom-in">
         <h2 class="card-title"><i class="ph ph-swap"></i> ¿Contra quién jugás?</h2>
-        <p class="card-desc">
-          Elegí el formato de la batalla con estos trucos seleccionados.
-        </p>
+        <p class="card-desc">Elegí el formato de la batalla con esos trucos seleccionados.</p>
 
         <div class="mode-options">
           <button class="btn btn-chill-vs" id="chillVsLocalBtn">
@@ -121,10 +128,10 @@
         </div>
       </div>
 
-      <!-- Paso 2A: Elegir cantidad de jugadores (modo local y también después de chill local) -->
+      <!-- Paso 2A: Selección de cantidad de jugadores (local / chill local) -->
       <div class="card card-players hidden" id="playerCountCard" data-aos="zoom-in">
         <h2 class="card-title"><i class="ph ph-user-plus"></i> ¿Cuántos jugadores?</h2>
-        <p class="card-desc">Decime cuántos van a jugar esta batalla. Pueden ser 2 o más.</p>
+        <p class="card-desc">Pueden ser de 2 a 6 jugadores.</p>
 
         <input type="number" id="playerCountInput" min="2" max="6" value="2">
 
@@ -140,12 +147,7 @@
           </h3>
 
           <div id="playerNamesFields" class="players-names-fields">
-            <!-- JS va a inyectar:
-              <div>
-                <div class="name-field-label">Nombre Jugador 1</div>
-                <input class="name-input" ... />
-              </div>
-            -->
+            <!-- JS va a inyectar inputs Nombre Jugador X -->
           </div>
 
           <button class="btn btn-confirm" id="confirmNamesBtn">
@@ -161,11 +163,7 @@
         <p class="card-desc">Cada IA tiene estilo, respeto y dificultad distinta.</p>
 
         <div class="ia-roster" id="iaRoster">
-          <!-- IA cards generadas por JS:
-            <div class="ia-card">
-              ...
-            </div>
-          -->
+          <!-- IA cards generadas por JS -->
         </div>
 
         <!-- Nombre del jugador humano contra la IA -->
@@ -189,7 +187,7 @@
         </div>
       </div>
 
-      <!-- Paso 3: Botón para empezar -->
+      <!-- Paso 3: Confirmación final antes de jugar -->
       <div class="card card-start hidden" id="startMatchCard" data-aos="zoom-in">
         <h2 class="card-title"><i class="ph ph-sword"></i> ¿Listos?</h2>
         <p class="card-desc">Cuando empiece, se van a ir generando trucos y turnos automáticamente.</p>
@@ -202,7 +200,9 @@
 
     </section>
 
-    <!-- GAME SCREEN -->
+    <!-- =========================================================
+         GAME SCREEN (scoreboard + acción + log caster)
+    ========================================================== -->
     <main class="game-area hidden" id="gameArea">
 
       <!-- SCOREBOARD -->
@@ -225,7 +225,7 @@
           </div>
 
           <div class="turn-info" id="turnInfo">
-            <!-- Ej: "Turno de PLAYER 1 para demostrar" -->
+            <!-- JS pone: "Turno de PLAYER X para DEMOSTRAR" / "X tiene que COPIAR a Y" -->
           </div>
         </div>
 
@@ -261,17 +261,19 @@
 
     </main>
 
-    <!-- FOOTER -->
+    <!-- =========================================================
+         FOOTER
+    ========================================================== -->
     <footer class="app-footer">
       <p>Fingerblade Alpha • v 1.0.0 • <span class="accent">By Rodri</span></p>
     </footer>
 
-  </div>
+  </div> <!-- .app-wrapper -->
 
-  <!-- JS LIBS -->
+  <!-- =========================================================
+       LIBS + GAME LOGIC
+  ========================================================== -->
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-
-  <!-- GAME LOGIC -->
   <script src="js/game.js"></script>
 
   <script>
