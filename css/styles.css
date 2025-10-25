@@ -1623,3 +1623,433 @@ body {
   color: var(--text-dim);
   text-align: center;
 }
+
+
+/* --- AURA ANIMADA DEL JUGADOR ACTIVO / COPIANDO --- */
+
+@keyframes auraPulseTurno {
+  0% {
+    box-shadow: 0 0 16px rgba(123, 91, 255, 0.6),
+                0 0 60px rgba(123, 91, 255, 0.15),
+                0 0 120px rgba(123, 91, 255, 0.05);
+    outline-color: rgba(123, 91, 255, 1);
+  }
+  50% {
+    box-shadow: 0 0 28px rgba(123, 91, 255, 0.9),
+                0 0 80px rgba(123, 91, 255, 0.35),
+                0 0 140px rgba(123, 91, 255, 0.12);
+    outline-color: rgba(123, 91, 255, .6);
+  }
+  100% {
+    box-shadow: 0 0 16px rgba(123, 91, 255, 0.6),
+                0 0 60px rgba(123, 91, 255, 0.15),
+                0 0 120px rgba(123, 91, 255, 0.05);
+    outline-color: rgba(123, 91, 255, 1);
+  }
+}
+
+@keyframes auraPulseCopy {
+  0% {
+    box-shadow: 0 0 16px rgba(255, 204, 0, 0.6),
+                0 0 60px rgba(255, 204, 0, 0.15),
+                0 0 120px rgba(255, 204, 0, 0.05);
+    outline-color: rgba(255, 204, 0, 1);
+  }
+  50% {
+    box-shadow: 0 0 28px rgba(255, 204, 0, 1),
+                0 0 80px rgba(255, 204, 0, 0.4),
+                0 0 140px rgba(255, 204, 0, 0.15);
+    outline-color: rgba(255, 204, 0, .6);
+  }
+  100% {
+    box-shadow: 0 0 16px rgba(255, 204, 0, 0.6),
+                0 0 60px rgba(255, 204, 0, 0.15),
+                0 0 120px rgba(255, 204, 0, 0.05);
+    outline-color: rgba(255, 204, 0, 1);
+  }
+}
+
+/* jugador que tira el truco */
+.player-card.active {
+  outline: 2px solid var(--accent-1);
+  animation: auraPulseTurno 1.6s ease-in-out infinite;
+}
+
+/* jugador que tiene que copiar */
+.player-card.copying {
+  outline: 2px solid var(--accent-warn);
+  animation: auraPulseCopy 1.6s ease-in-out infinite;
+}
+
+/* badge chiquito arriba a la derecha ("TIRA EL TRUCO" / "DEBE COPIAR") más gamer */
+.player-role-label {
+  position: absolute;
+  top: .5rem;
+  right: .75rem;
+  font-size: .6rem;
+  font-family: var(--font-title);
+  font-weight: 600;
+  line-height: 1.2;
+  padding: .25rem .5rem;
+  border-radius: var(--radius-sm);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  background: rgba(0,0,0,.6);
+  border: 1px solid rgba(255,255,255,.15);
+  color: var(--accent-2);
+  box-shadow: 0 8px 30px rgba(0,0,0,.9);
+}
+
+.player-card.copying .player-role-label {
+  color: var(--accent-warn);
+}
+
+
+/* === TURN INFO DESTACADO === */
+
+.turn-info-block {
+  display: flex;
+  align-items: flex-start;
+  gap: .75rem;
+  margin-top: 1rem;
+  padding: .75rem .9rem;
+  border-radius: var(--radius-sm);
+  background: rgba(0,0,0,.5);
+  border: 1px solid rgba(255,255,255,.1);
+  box-shadow: 0 20px 60px rgba(0,0,0,.9);
+  position: relative;
+  font-family: var(--font-body);
+}
+
+.turn-info-icon {
+  min-width: 2rem;
+  min-height: 2rem;
+  border-radius: .5rem;
+  background: radial-gradient(circle at 20% 20%, rgba(0,255,169,.4) 0%, rgba(0,0,0,0) 70%), #1a1a2e;
+  border: 1px solid rgba(0,255,169,.6);
+  color: var(--accent-2);
+  font-family: var(--font-title);
+  font-weight: 600;
+  font-size: .7rem;
+  line-height: 1.2;
+  letter-spacing: .08em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 15px 40px rgba(0,255,169,.4);
+  text-transform: uppercase;
+  animation: turnPingGreen 1.6s ease-in-out infinite;
+}
+
+.turn-info-text {
+  font-size: var(--font-size-sm);
+  line-height: 1.4;
+  color: var(--text-main);
+  font-weight: 500;
+}
+.turn-info-text .highlight-name {
+  color: var(--accent-2);
+  font-family: var(--font-title);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+.turn-info-text .highlight-action {
+  color: var(--accent-2);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  font-family: var(--font-title);
+}
+
+/* variante cuando está copiando (amarillo) */
+.turn-info-block.copy-phase .turn-info-icon {
+  background: radial-gradient(circle at 20% 20%, rgba(255,204,0,.4) 0%, rgba(0,0,0,0) 70%), #1a1a2e;
+  border: 1px solid rgba(255,204,0,.7);
+  color: var(--accent-warn);
+  box-shadow: 0 15px 40px rgba(255,204,0,.4);
+  animation: turnPingYellow 1.6s ease-in-out infinite;
+}
+.turn-info-block.copy-phase .turn-info-text .highlight-name,
+.turn-info-block.copy-phase .turn-info-text .highlight-action {
+  color: var(--accent-warn);
+}
+
+/* pulso iconito */
+@keyframes turnPingGreen {
+  0%   { box-shadow: 0 0 8px rgba(0,255,169,.6), 0 0 30px rgba(0,255,169,.25); }
+  50%  { box-shadow: 0 0 16px rgba(0,255,169,1), 0 0 45px rgba(0,255,169,.4); }
+  100% { box-shadow: 0 0 8px rgba(0,255,169,.6), 0 0 30px rgba(0,255,169,.25); }
+}
+@keyframes turnPingYellow {
+  0%   { box-shadow: 0 0 8px rgba(255,204,0,.6), 0 0 30px rgba(255,204,0,.25); }
+  50%  { box-shadow: 0 0 16px rgba(255,204,0,1), 0 0 45px rgba(255,204,0,.4); }
+  100% { box-shadow: 0 0 8px rgba(255,204,0,.6), 0 0 30px rgba(255,204,0,.25); }
+}
+
+/* cajita dinámica "quién juega ahora" */
+.turn-info-block {
+  display: flex;
+  align-items: center;            /* <-- nuevo: centra vertical icono + texto */
+  gap: .75rem;
+
+  background: rgba(0,0,0,.4);
+  border: 1px solid rgba(0,255,169,.3);
+  box-shadow: 0 0 20px rgba(0,255,169,.4), 0 30px 80px rgba(0,0,0,.8);
+  border-radius: var(--radius-sm);
+
+  padding: .9rem 1rem;            /* <-- antes era .75rem 1rem, lo engroso un toque */
+  font-size: var(--font-size-md);
+  line-height: 1.4;
+  font-family: var(--font-body);
+  color: var(--text-main);
+}
+
+/* iconito cuadrado que late */
+.turn-info-icon {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
+
+  border-radius: var(--radius-sm);
+  background: radial-gradient(circle at 20% 20%, rgba(0,255,169,.25) 0%, rgba(0,0,0,0) 70%), #1a1a2e;
+  border: 1px solid rgba(0,255,169,.5);
+  box-shadow: 0 0 18px rgba(0,255,169,.6);
+  color: var(--accent-2); /* verde */
+  font-family: var(--font-title);
+  font-weight: 600;
+  font-size: .9rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  animation: pulseTurnIcon 2s infinite ease-in-out;
+}
+
+/* texto */
+.turn-info-text {
+  color: var(--text-main);
+  font-size: var(--font-size-md);
+  line-height: 1.4;
+  font-family: var(--font-body);
+  font-weight: 500;
+}
+
+.turn-info-text .highlight-name {
+  color: var(--accent-2);
+  font-family: var(--font-title);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+.turn-info-text .highlight-action {
+  color: var(--accent-2);
+  font-family: var(--font-title);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+/* modo copia cambia a amarillo */
+.turn-info-block.copy-mode {
+  border-color: var(--accent-warn);
+  box-shadow: 0 0 20px rgba(255,204,0,.4), 0 30px 80px rgba(0,0,0,.8);
+}
+.turn-info-block.copy-mode .turn-info-icon {
+  border-color: var(--accent-warn);
+  color: var(--accent-warn);
+  box-shadow: 0 0 18px rgba(255,204,0,.6);
+  background: radial-gradient(circle at 20% 20%, rgba(255,204,0,.25) 0%, rgba(0,0,0,0) 70%), #1a1a2e;
+}
+
+/* pulso suave del icono play / copy */
+@keyframes pulseTurnIcon {
+  0%,100% { box-shadow: 0 0 18px rgba(0,255,169,.6); }
+  50%     { box-shadow: 0 0 28px rgba(0,255,169,1); }
+}
+.turn-info-block.copy-mode .turn-info-icon {
+  animation-name: pulseTurnIconCopy;
+}
+@keyframes pulseTurnIconCopy {
+  0%,100% { box-shadow: 0 0 18px rgba(255,204,0,.6); }
+  50%     { box-shadow: 0 0 28px rgba(255,204,0,1); }
+}
+
+
+.card-rules {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.rules-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.rule-row {
+  display: flex;
+  align-items: flex-start;
+  gap: .75rem;
+}
+
+.rule-icon {
+  width: 2rem;
+  height: 2rem;
+  border-radius: .5rem;
+  background: radial-gradient(circle at 20% 20%, rgba(0,255,120,.15) 0%, rgba(0,0,0,0) 70%);
+  border: 1px solid rgba(0,255,120,.4);
+  color: var(--accent-1); /* tu verde */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .9rem;
+  flex-shrink: 0;
+}
+
+.rule-text .rule-head {
+  font-family: var(--font-title);
+  font-weight: 600;
+  font-size: .9rem;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+}
+
+.rule-text .rule-desc {
+  font-size: .8rem;
+  line-height: 1.4;
+  color: var(--text-dim);
+}
+
+.rule-word {
+  font-family: var(--font-title);
+  font-weight: 600;
+  letter-spacing: .05em;
+  color: var(--accent-1);
+}
+
+.inline-badge {
+  font-size: .7rem;
+  padding: .15rem .4rem;
+  border-radius: .4rem;
+  font-weight: 600;
+  font-family: var(--font-title);
+  line-height: 1.2;
+}
+
+.inline-badge.demo {
+  background: rgba(0,255,120,.08);
+  border: 1px solid rgba(0,255,120,.4);
+  color: var(--accent-1);
+}
+
+.inline-badge.copy {
+  background: rgba(255,196,0,.07);
+  border: 1px solid rgba(255,196,0,.4);
+  color: rgb(255,196,0);
+}
+
+.rules-perks {
+  border-top: 1px solid rgba(255,255,255,.05);
+  padding-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+}
+
+.perks-title {
+  font-family: var(--font-title);
+  font-weight: 600;
+  color: var(--accent-1);
+  font-size: .85rem;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+
+.perks-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+  padding: 0;
+  margin: 0;
+}
+
+.perk-badge {
+  display: inline-block;
+  font-size: .7rem;
+  font-weight: 600;
+  font-family: var(--font-title);
+  padding: .2rem .5rem;
+  border-radius: .4rem;
+  line-height: 1.2;
+  margin-bottom: .25rem;
+}
+
+.perk-badge.high {
+  background: rgba(0,255,120,.08);
+  border: 1px solid rgba(0,255,120,.4);
+  color: var(--accent-1);
+}
+
+.perk-badge.god {
+  background: rgba(0,200,255,.08);
+  border: 1px solid rgba(0,200,255,.4);
+  color: rgb(0,200,255);
+}
+
+.perk-badge.low {
+  background: rgba(255,196,0,.07);
+  border: 1px solid rgba(255,196,0,.4);
+  color: rgb(255,196,0);
+}
+
+.perk-badge.minus {
+  background: rgba(255,0,60,.07);
+  border: 1px solid rgba(255,0,60,.4);
+  color: rgb(255,0,60);
+}
+
+.perk-desc {
+  font-size: .8rem;
+  line-height: 1.4;
+  color: var(--text-dim);
+  display: block;
+}
+
+.rules-tips {
+  border-top: 1px solid rgba(255,255,255,.05);
+  padding-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+}
+
+.tips-title {
+  font-family: var(--font-title);
+  font-weight: 600;
+  color: rgb(255,196,0);
+  font-size: .85rem;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+
+.tips-list {
+  padding-left: 1rem;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+
+.tips-list li {
+  font-size: .8rem;
+  line-height: 1.4;
+  color: var(--text-dim);
+  list-style: disc;
+}
