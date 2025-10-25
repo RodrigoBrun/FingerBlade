@@ -1,288 +1,294 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fingerblade: TrickBattle Arena</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fingerblade: TrickBattle Arena</title>
 
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
 
-  <!-- Phosphor Icons -->
-  <script src="https://unpkg.com/phosphor-icons"></script>
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/phosphor-icons"></script>
 
-  <!-- AOS Animations -->
-  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
+    <!-- AOS Animations -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
 
-  <!-- Main CSS -->
-  <link rel="stylesheet" href="css/styles.css" />
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="css/styles.css" />
 </head>
+
 <body>
 
-  <div class="app-wrapper">
+    <div class="app-wrapper">
 
-    <!-- =========================================================
+        <!-- =========================================================
          HEADER / BRAND (siempre visible arriba)
     ========================================================== -->
-    <header class="app-header" data-aos="fade-down">
-      <div class="brand-block">
-        <div class="brand-logo">
-          <div class="logo-placeholder">FB</div>
-        </div>
-        <div class="brand-text">
-          <h1 class="brand-title">FINGERBLADE</h1>
-          <p class="brand-sub">TRICKBATTLE ARENA</p>
-        </div>
-      </div>
+        <header class="app-header" data-aos="fade-down">
+            <div class="brand-block">
+                <div class="brand-logo">
+                    <div class="logo-placeholder">FB</div>
+                </div>
+                <div class="brand-text">
+                    <h1 class="brand-title">FINGERBLADE</h1>
+                    <p class="brand-sub">TRICKBATTLE ARENA</p>
+                </div>
+            </div>
 
-      <div class="match-info-top">
-        <div class="arena-badge">
-          <i class="ph ph-flame"></i>
-          <span id="arenaName">Arena: Kitchen Counter</span>
-        </div>
+            <div class="match-info-top">
+                <div class="arena-badge">
+                    <i class="ph ph-flame"></i>
+                    <span id="arenaName">Arena: Kitchen Counter</span>
+                </div>
 
-        <div class="mode-badge" id="modeBadge">
-          <i class="ph ph-swords"></i>
-          <span>Sin partida</span>
-        </div>
-      </div>
-    </header>
+                <div class="mode-badge" id="modeBadge">
+                    <i class="ph ph-swords"></i>
+                    <span>Sin partida</span>
+                </div>
+            </div>
+        </header>
 
-    <!-- =========================================================
+        <!-- =========================================================
          HEADER DE SETUP MOBILE (barra con "Volver" y paso actual)
          - El JS la muestra / oculta dinámicamente
          - Por defecto puede estar display:none en CSS (en desktop) y flex en mobile
            pero SIN inline style acá (esto es importante)
     ========================================================== -->
-    <div class="setup-header-mobile" id="setupHeaderMobile">
-      <button class="back-btn" id="backBtn">
-        <i class="ph ph-arrow-left"></i>
-        <span>Volver</span>
-      </button>
-      <div class="setup-step-label" id="setupStepLabel">Setup</div>
-    </div>
+        <div class="setup-header-mobile" id="setupHeaderMobile">
+            <button class="back-btn" id="backBtn">
+                <i class="ph ph-arrow-left"></i>
+                <span>Volver</span>
+            </button>
+            <div class="setup-step-label" id="setupStepLabel">Setup</div>
+        </div>
 
-    <!-- =========================================================
+        <!-- =========================================================
          SETUP SCREEN (pantallas previas a empezar la batalla)
     ========================================================== -->
-    <section class="setup-screen" id="setupScreen">
+        <section class="setup-screen" id="setupScreen">
 
-      <!-- Paso 1: Elegir tipo de partida -->
-      <!-- IMPORTANTE: este card es la raíz del flujo -> id="card-mode" para el stack -->
-      <div class="card card-mode" id="card-mode" data-aos="zoom-in">
-        <h2 class="card-title"><i class="ph ph-game-controller"></i> Tipo de partida</h2>
+            <!-- Paso 1: Elegir tipo de partida -->
+            <!-- IMPORTANTE: este card es la raíz del flujo -> id="card-mode" para el stack -->
+            <div class="card card-mode" id="card-mode" data-aos="zoom-in">
+                <h2 class="card-title"><i class="ph ph-game-controller"></i> Tipo de partida</h2>
 
-        <div class="mode-options">
-          <button class="btn mode-select" data-mode="local">
-            <i class="ph ph-users-three"></i>
-            <span>Multijugador local</span>
-            <small>Juegan en la misma mesa, turnándose</small>
-          </button>
+                <div class="mode-options">
+                    <button class="btn mode-select" data-mode="local">
+                        <i class="ph ph-users-three"></i>
+                        <span>Multijugador local</span>
+                        <small>Juegan en la misma mesa, turnándose</small>
+                    </button>
 
-          <button class="btn mode-select" data-mode="ia">
-            <i class="ph ph-robot"></i>
-            <span>Contra IA</span>
-            <small>Desafío 1v1 contra personajes</small>
-          </button>
+                    <button class="btn mode-select" data-mode="ia">
+                        <i class="ph ph-robot"></i>
+                        <span>Contra IA</span>
+                        <small>Desafío 1v1 contra personajes</small>
+                    </button>
 
-          <button class="btn mode-select" data-mode="chill">
-            <i class="ph ph-coffee"></i>
-            <span>Modo Chill</span>
-            <small>Solo los trucos que yo elijo</small>
-          </button>
-        </div>
-      </div>
+                    <button class="btn mode-select" data-mode="chill">
+                        <i class="ph ph-coffee"></i>
+                        <span>Modo Chill</span>
+                        <small>Solo los trucos que yo elijo</small>
+                    </button>
+                </div>
+            </div>
 
-      <!-- Paso 1.5 (solo modo chill): elegir trucos -->
-      <div class="card card-tricks hidden" id="trickSelectCard" data-aos="zoom-in">
-        <h2 class="card-title"><i class="ph ph-check-square-offset"></i> Elegí tus trucos</h2>
-        <p class="card-desc">Marcá solo los trucos con los que te sentís cómodo. La batalla va a usar SOLO esos.</p>
+            <!-- Paso 1.5 (solo modo chill): elegir trucos -->
+            <div class="card card-tricks hidden" id="trickSelectCard" data-aos="zoom-in">
+                <h2 class="card-title"><i class="ph ph-check-square-offset"></i> Elegí tus trucos</h2>
+                <p class="card-desc">Marcá solo los trucos con los que te sentís cómodo. La batalla va a usar SOLO esos.
+                </p>
 
-        <div class="trick-select-list" id="trickSelectList">
-          <!-- JS inyecta opciones tipo checkbox -->
-        </div>
+                <div class="trick-select-list" id="trickSelectList">
+                    <!-- JS inyecta opciones tipo checkbox -->
+                </div>
 
-        <button class="btn btn-confirm" id="confirmTricksBtn">
-          <i class="ph ph-check-circle"></i>
-          Usar estos trucos
-        </button>
-      </div>
+                <button class="btn btn-confirm" id="confirmTricksBtn">
+                    <i class="ph ph-check-circle"></i>
+                    Usar estos trucos
+                </button>
+            </div>
 
-      <!-- Paso 1.5b (solo modo chill): ¿Contra quién jugás? -->
-      <div class="card card-chill-vs hidden" id="chillVsCard" data-aos="zoom-in">
-        <h2 class="card-title"><i class="ph ph-swap"></i> ¿Contra quién jugás?</h2>
-        <p class="card-desc">Elegí el formato de la batalla con esos trucos seleccionados.</p>
+            <!-- Paso 1.5b (solo modo chill): ¿Contra quién jugás? -->
+            <div class="card card-chill-vs hidden" id="chillVsCard" data-aos="zoom-in">
+                <h2 class="card-title"><i class="ph ph-swap"></i> ¿Contra quién jugás?</h2>
+                <p class="card-desc">Elegí el formato de la batalla con esos trucos seleccionados.</p>
 
-        <div class="mode-options">
-          <button class="btn btn-chill-vs" id="chillVsLocalBtn">
-            <i class="ph ph-users-three"></i>
-            <span>Multijugador local</span>
-            <small>Ustedes se desafían con esa lista de trucos</small>
-          </button>
+                <div class="mode-options">
+                    <button class="btn btn-chill-vs" id="chillVsLocalBtn">
+                        <i class="ph ph-users-three"></i>
+                        <span>Multijugador local</span>
+                        <small>Ustedes se desafían con esa lista de trucos</small>
+                    </button>
 
-          <button class="btn btn-chill-vs" id="chillVsIABtn">
-            <i class="ph ph-robot"></i>
-            <span>Contra IA</span>
-            <small>1v1 usando solo esos trucos</small>
-          </button>
-        </div>
-      </div>
+                    <button class="btn btn-chill-vs" id="chillVsIABtn">
+                        <i class="ph ph-robot"></i>
+                        <span>Contra IA</span>
+                        <small>1v1 usando solo esos trucos</small>
+                    </button>
+                </div>
+            </div>
 
-      <!-- Paso 2A: Selección de cantidad de jugadores (local / chill local) -->
-      <div class="card card-players hidden" id="playerCountCard" data-aos="zoom-in">
-        <h2 class="card-title"><i class="ph ph-user-plus"></i> ¿Cuántos jugadores?</h2>
-        <p class="card-desc">Pueden ser de 2 a 6 jugadores.</p>
+            <!-- Paso 2A: Selección de cantidad de jugadores (local / chill local) -->
+            <div class="card card-players hidden" id="playerCountCard" data-aos="zoom-in">
+                <h2 class="card-title"><i class="ph ph-user-plus"></i> ¿Cuántos jugadores?</h2>
+                <p class="card-desc">Pueden ser de 2 a 6 jugadores.</p>
 
-        <input type="number" id="playerCountInput" min="2" max="6" value="2">
+                <input type="number" id="playerCountInput" min="2" max="6" value="2">
 
-        <button class="btn btn-confirm" id="confirmPlayerCountBtn">
-          <i class="ph ph-check-circle"></i>
-          Confirmar jugadores
-        </button>
+                <button class="btn btn-confirm" id="confirmPlayerCountBtn">
+                    <i class="ph ph-check-circle"></i>
+                    Confirmar jugadores
+                </button>
 
-        <!-- Edición de nombres de jugadores locales -->
-        <div class="players-names-wrapper hidden" id="playersNamesWrapper">
-          <h3 class="players-names-title">
-            <i class="ph ph-identification-card"></i> Nombres de jugadores
-          </h3>
+                <!-- Edición de nombres de jugadores locales -->
+                <div class="players-names-wrapper hidden" id="playersNamesWrapper">
+                    <h3 class="players-names-title">
+                        <i class="ph ph-identification-card"></i> Nombres de jugadores
+                    </h3>
 
-          <div id="playerNamesFields" class="players-names-fields">
-            <!-- JS va a inyectar inputs Nombre Jugador X -->
-          </div>
+                    <div id="playerNamesFields" class="players-names-fields">
+                        <!-- JS va a inyectar inputs Nombre Jugador X -->
+                    </div>
 
-          <button class="btn btn-confirm" id="confirmNamesBtn">
-            <i class="ph ph-check-circle"></i>
-            Listo, usar estos nombres
-          </button>
-        </div>
-      </div>
+                    <button class="btn btn-confirm" id="confirmNamesBtn">
+                        <i class="ph ph-check-circle"></i>
+                        Listo, usar estos nombres
+                    </button>
+                </div>
+            </div>
 
-      <!-- Paso 2B: Elegir IA (modo ia directo o chill vs ia) -->
-      <div class="card card-ia hidden" id="iaSelectCard" data-aos="zoom-in">
-        <h2 class="card-title"><i class="ph ph-target"></i> Elegí oponente IA</h2>
-        <p class="card-desc">Cada IA tiene estilo, respeto y dificultad distinta.</p>
+            <!-- Paso 2B: Elegir IA (modo ia directo o chill vs ia) -->
+            <div class="card card-ia hidden" id="iaSelectCard" data-aos="zoom-in">
+                <h2 class="card-title"><i class="ph ph-target"></i> Elegí oponente IA</h2>
+                <p class="card-desc">Cada IA tiene estilo, respeto y dificultad distinta.</p>
 
-        <div class="ia-roster" id="iaRoster">
-          <!-- IA cards generadas por JS -->
-        </div>
+                <div class="ia-roster" id="iaRoster">
+                    <!-- IA cards generadas por JS -->
+                </div>
 
-        <!-- Nombre del jugador humano contra la IA -->
-        <div class="your-name-wrapper hidden" id="yourNameWrapper">
-          <h3 class="players-names-title">
-            <i class="ph ph-identification-card"></i> Tu nombre
-          </h3>
+                <!-- Nombre del jugador humano contra la IA -->
+                <div class="your-name-wrapper hidden" id="yourNameWrapper">
+                    <h3 class="players-names-title">
+                        <i class="ph ph-identification-card"></i> Tu nombre
+                    </h3>
 
-          <input
-            type="text"
-            id="yourNameInput"
-            class="name-input"
-            placeholder="Ej: Rodri, El Dedo Mágico, etc."
-            maxlength="20"
-          />
+                    <input type="text" id="yourNameInput" class="name-input"
+                        placeholder="Ej: Rodri, El Dedo Mágico, etc." maxlength="20" />
 
-          <button class="btn btn-confirm" id="confirmYourNameBtn">
-            <i class="ph ph-check-circle"></i>
-            Usar este nombre
-          </button>
-        </div>
-      </div>
+                    <button class="btn btn-confirm" id="confirmYourNameBtn">
+                        <i class="ph ph-check-circle"></i>
+                        Usar este nombre
+                    </button>
+                </div>
+            </div>
 
-      <!-- Paso 3: Confirmación final antes de jugar -->
-      <div class="card card-start hidden" id="startMatchCard" data-aos="zoom-in">
-        <h2 class="card-title"><i class="ph ph-sword"></i> ¿Listos?</h2>
-        <p class="card-desc">Cuando empiece, se van a ir generando trucos y turnos automáticamente.</p>
+            <!-- Paso 3: Confirmación final antes de jugar -->
+            <div class="card card-start hidden" id="startMatchCard" data-aos="zoom-in">
+                <h2 class="card-title"><i class="ph ph-sword"></i> ¿Listos?</h2>
+                <p class="card-desc">Cuando empiece, se van a ir generando trucos y turnos automáticamente.</p>
 
-        <button class="btn btn-start" id="startMatchBtn">
-          <i class="ph ph-play-circle"></i>
-          Iniciar batalla
-        </button>
-      </div>
+                <button class="btn btn-start" id="startMatchBtn">
+                    <i class="ph ph-play-circle"></i>
+                    Iniciar batalla
+                </button>
+            </div>
 
-    </section>
+        </section>
 
-    <!-- =========================================================
+        <!-- =========================================================
          GAME SCREEN (scoreboard + acción + log caster)
     ========================================================== -->
-    <main class="game-area hidden" id="gameArea">
+        <main class="game-area hidden" id="gameArea">
 
-      <!-- SCOREBOARD -->
-      <section class="scoreboard" data-aos="fade-up">
-        <div id="playersContainer" class="players-container">
-          <!-- Player cards generadas por JS -->
-        </div>
-      </section>
+            <!-- SCOREBOARD -->
+            <section class="scoreboard" data-aos="fade-up">
+                <div id="playersContainer" class="players-container">
+                    <!-- Player cards generadas por JS -->
+                </div>
+            </section>
 
-      <section class="battle-zone">
+            <section class="battle-zone">
 
-        <!-- TRUCO ACTUAL -->
-        <div class="current-trick card" data-aos="zoom-in">
-          <div class="trick-label">TRUCO LLAMADO AHORA</div>
-          <div class="trick-name" id="trickName">---</div>
+                <!-- TRUCO ACTUAL -->
+                <div class="current-trick card" data-aos="zoom-in">
+                    <div class="trick-label">TRUCO LLAMADO AHORA</div>
+                    <div class="trick-name" id="trickName">---</div>
 
-          <div class="trick-meta">
-            <div class="meta-chip" id="trickStyle"><i class="ph ph-lightning"></i> Estilo: -</div>
-            <div class="meta-chip" id="trickDiff"><i class="ph ph-star"></i> Dificultad: -</div>
-          </div>
+                    <div class="trick-meta">
+                        <div class="meta-chip" id="trickStyle"><i class="ph ph-lightning"></i> Estilo: -</div>
+                        <div class="meta-chip" id="trickDiff"><i class="ph ph-star"></i> Dificultad: -</div>
+                    </div>
 
-          <div class="turn-info" id="turnInfo">
-            <!-- JS pone: "Turno de PLAYER X para DEMOSTRAR" / "X tiene que COPIAR a Y" -->
-          </div>
-        </div>
+                    <div class="turn-info" id="turnInfo">
+                        <!-- JS pone: "Turno de PLAYER X para DEMOSTRAR" / "X tiene que COPIAR a Y" -->
+                    </div>
+                </div>
 
-        <!-- ACCIONES DEL JUGADOR ACTUAL -->
-        <div class="action-panel card" data-aos="zoom-in">
-          <h3 class="panel-title"><i class="ph ph-hand-pointing"></i> ¿Cómo te salió?</h3>
-          <div class="action-buttons">
-            <button class="btn action-btn clean" id="btnClean">
-              <i class="ph ph-check-circle"></i>
-              LIMPIO
-            </button>
-            <button class="btn action-btn sketchy" id="btnSketchy">
-              <i class="ph ph-warning-circle"></i>
-              MEDIO SKETCHY
-            </button>
-            <button class="btn action-btn fail" id="btnFail">
-              <i class="ph ph-x-circle"></i>
-              FALLÉ FEO
-            </button>
-          </div>
-          <p class="action-hint">Esto afecta Respeto y puede dar letras al rival.</p>
-        </div>
+                <!-- ACCIONES DEL JUGADOR ACTUAL -->
+                <div class="action-panel card" data-aos="zoom-in">
+                    <h3 class="panel-title"><i class="ph ph-hand-pointing"></i> ¿Cómo te salió?</h3>
 
-        <!-- MATCH LOG -->
-        <div class="match-log card" data-aos="zoom-in">
-          <h3 class="panel-title"><i class="ph ph-chat-centered-dots"></i> Log de la batalla</h3>
-          <div class="log-feed" id="logFeed">
-            <!-- Comentarios del caster -->
-          </div>
-        </div>
+                    <div class="action-buttons">
+                        <button class="btn action-btn clean" id="btnClean">
+                            <i class="ph ph-check-circle"></i>
+                            <span>LIMPIO</span>
+                        </button>
 
-      </section>
+                        <button class="btn action-btn sketchy" id="btnSketchy">
+                            <i class="ph ph-warning-circle"></i>
+                            <span>MEDIO SKETCHY</span>
+                        </button>
 
-    </main>
+                        <button class="btn action-btn fail" id="btnFail">
+                            <i class="ph ph-x-circle"></i>
+                            <span>FALLÉ FEO</span>
+                        </button>
+                    </div>
 
-    <!-- =========================================================
+                    <p class="action-hint">Esto afecta Respeto y puede dar letras al rival.</p>
+                </div>
+
+
+                <!-- MATCH LOG -->
+                <div class="match-log card" data-aos="zoom-in">
+                    <h3 class="panel-title"><i class="ph ph-chat-centered-dots"></i> Log de la batalla</h3>
+                    <div class="log-feed" id="logFeed">
+                        <!-- Comentarios del caster -->
+                    </div>
+                </div>
+
+            </section>
+
+        </main>
+
+        <!-- =========================================================
          FOOTER
     ========================================================== -->
-    <footer class="app-footer">
-      <p>Fingerblade Alpha • v 1.0.0 • <span class="accent">By Rodri</span></p>
-    </footer>
+        <footer class="app-footer">
+            <p>Fingerblade Alpha • v 1.0.0 • <span class="accent">By Rodri</span></p>
+        </footer>
 
-  </div> <!-- .app-wrapper -->
+    </div> <!-- .app-wrapper -->
 
-  <!-- =========================================================
+    <!-- =========================================================
        LIBS + GAME LOGIC
   ========================================================== -->
-  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-  <script src="js/game.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="js/game.js"></script>
 
-  <script>
-    AOS.init({
-      once: true,
-      duration: 600,
-      easing: 'ease-out-cubic'
-    });
-  </script>
+    <script>
+        AOS.init({
+            once: true,
+            duration: 600,
+            easing: 'ease-out-cubic'
+        });
+    </script>
 
 </body>
+
 </html>
