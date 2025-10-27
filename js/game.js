@@ -124,6 +124,15 @@ const iaRosterData = [
     setupDesc: "Deck 33mm · Trucks Pro · Ruedas uretano blancas brillantes · Grip negro lija fina pro"
   },
   {
+    name: "Darked",
+    flag: "🇨🇴 Colombia",
+    respetoBase: 95,
+    skill: 98,
+    diffLabel: "Glitch Precision",
+    setupDesc: "Deck blackout matte full black · Trucks low custom limados · Ruedas smoke translúcidas · Grip recortado a navaja"
+    // Boss fight. Frío. No perdona.
+  },
+  {
     name: "Ghost Kid",
     flag: "🇯🇵 Japón",
     respetoBase: 80,
@@ -145,7 +154,7 @@ const iaRosterData = [
     respetoBase: 60,
     skill: 65,
     diffLabel: "Inestable pero creativo",
-    setupDesc: "Tabla con gráfico mármol, bushings flojos, ruedas flatspot"
+    setupDesc: "Tabla con gráfico mármol · Bushings flojos · Ruedas flatspot"
   },
   {
     name: "Plastic Hero",
@@ -154,25 +163,97 @@ const iaRosterData = [
     skill: 50,
     diffLabel: "Sketchy Warrior",
     setupDesc: "Deck plástico del chino · Trucks genéricos · Grip medio pelado pero actitud infinita"
+  },
+  {
+    name: "Lil Socket",
+    flag: "🇩🇪 Alemania",
+    respetoBase: 68,
+    skill: 72,
+    diffLabel: "Nerd del timing",
+    setupDesc: "Deck carbono crudo · Ejes titanio impresos 3D · Tape con marcas de ángulo"
+  },
+  {
+    name: "Trash Panda",
+    flag: "🇨🇦 Canadá",
+    respetoBase: 77,
+    skill: 82,
+    diffLabel: "Calle pura",
+    setupDesc: "Deck rayado con stickers rotos · Ruedas desparejas · Grip roto en la punta"
   }
 ];
 
-// pool base de trucos
+// =========================
+// POOL BASE DE TRUCOS
+// =========================
+// style y difficulty se mantienen igual que tu formato original
 const trickPool = [
-  { name: "Ollie limpio",              style: "Flip",      difficulty: 1 },
-  { name: "Shuvit",                     style: "Flip",      difficulty: 1 },
-  { name: "Kickflip",                   style: "Flip",      difficulty: 2 },
-  { name: "Heelflip",                   style: "Flip",      difficulty: 2 },
-  { name: "Varial Kickflip",            style: "Flip",      difficulty: 3 },
-  { name: "Tre Flip (360 Flip)",        style: "Flip",      difficulty: 4 },
-  { name: "Nollie Heelflip",            style: "Nollie",    difficulty: 3 },
-  { name: "Switch Kickflip",            style: "Switch",    difficulty: 4 },
-  { name: "Nose Manual largo",          style: "Manual",    difficulty: 3 },
-  { name: "Manual + Shuvit out",        style: "Manual",    difficulty: 4 },
-  { name: "Crooked Grind en borde",     style: "Grind",     difficulty: 3 },
-  { name: "Nosegrind to Nollie Shuvit", style: "Grind",     difficulty: 5 },
-  { name: "Línea: Flip + Manual",       style: "Linea",     difficulty: 4 }
+  // Básicos / foundation
+  { name: "Ollie limpio",                        style: "Flip",      difficulty: 1 },
+  { name: "Shuvit",                               style: "Flip",      difficulty: 1 },
+  { name: "Pop Shuvit",                           style: "Flip",      difficulty: 2 },
+  { name: "Kickflip",                             style: "Flip",      difficulty: 2 },
+  { name: "Heelflip",                             style: "Flip",      difficulty: 2 },
+  { name: "Varial Kickflip",                      style: "Flip",      difficulty: 3 },
+  { name: "Hardflip",                             style: "Flip",      difficulty: 4 },
+  { name: "Tre Flip (360 Flip)",                  style: "Flip",      difficulty: 5 },
+  { name: "Laser Flip",                           style: "Flip",      difficulty: 7 }, // heelflip + 360 shuv
+  { name: "Impossible (wrap)",                    style: "Flip",      difficulty: 7 },
+  { name: "Late Flip (flip tardío en el aire)",   style: "Flip",      difficulty: 6 },
+  { name: "Double Kickflip limpio",               style: "Flip",      difficulty: 7 },
+
+  // Nollie / Switch / Fakie
+  { name: "Nollie Heelflip",                      style: "Nollie",    difficulty: 3 },
+  { name: "Nollie Tre Flip",                      style: "Nollie",    difficulty: 6 },
+  { name: "Nollie 360 Hardflip",                  style: "Nollie",    difficulty: 10 },
+  { name: "Nollie Bigspin",                       style: "Nollie",    difficulty: 4 },
+  { name: "Switch Kickflip",                      style: "Switch",    difficulty: 4 },
+  { name: "Switch Heelflip",                      style: "Switch",    difficulty: 4 },
+  { name: "Switch 360 Shuvit",                    style: "Switch",    difficulty: 6 },
+  { name: "Fakie Bigspin",                        style: "Fakie",     difficulty: 3 },
+  { name: "Caballerial (Fakie 360)",              style: "Fakie",     difficulty: 4 },
+  { name: "Fakie Tre Flip",                       style: "Fakie",     difficulty: 6 },
+  { name: "Fakie Hardflip",                       style: "Fakie",     difficulty: 6 },
+
+  // Manuals
+  { name: "Manual limpio",                        style: "Manual",    difficulty: 2 },
+  { name: "Nose Manual largo",                    style: "Manual",    difficulty: 3 },
+  { name: "Manual to Shuvit",                     style: "Manual",    difficulty: 4 },
+  { name: "Manual to Kickflip",                   style: "Manual",    difficulty: 5 },
+  { name: "Nose Manual to Nollie Flip",           style: "Manual",    difficulty: 6 },
+  { name: "Manual revert fakie",                  style: "Manual",    difficulty: 4 },
+
+  // Grinds / Slides base
+  // (sin out para poder combinar con un 'out' después)
+  { name: "Crooked Grind en borde",               style: "Grind",     difficulty: 3 },
+  { name: "Nosegrind en baranda",                 style: "Grind",     difficulty: 4 },
+  { name: "5-0 Grind en cajón",                   style: "Grind",     difficulty: 3 },
+  { name: "Smith Grind bajo presión",             style: "Grind",     difficulty: 5 },
+  { name: "Feeble Grind en bajada",               style: "Grind",     difficulty: 6 },
+  { name: "Overcrook tensión máxima",             style: "Grind",     difficulty: 7 },
+  { name: "Bluntslide en borde corto",            style: "Grind",     difficulty: 6 },
+  { name: "Noseslide switch",                     style: "Grind",     difficulty: 5 },
+  { name: "Tailslide fakie out",                  style: "Grind",     difficulty: 6 }, // este ya tiene salida propia
+  { name: "Darkslide controlado",                 style: "Grind",     difficulty: 9 },
+
+  // Líneas / combos
+  { name: "Línea: Kickflip + Manual",             style: "Linea",     difficulty: 4 },
+  { name: "Línea: Tre Flip → Nose Manual",        style: "Linea",     difficulty: 6 },
+  { name: "Línea: Nollie Flip → Crooked",         style: "Linea",     difficulty: 7 },
+  { name: "Línea: Fakie Bigspin → Smith Grind",   style: "Linea",     difficulty: 8 },
+  { name: "Línea: Switch Flip → 5-0",             style: "Linea",     difficulty: 8 },
+  { name: "Línea: Hardflip → Manual → Shuvit",    style: "Linea",     difficulty: 9 },
+
+  // Flex insane / boss tricks
+  { name: "Bigspin Late Flip",                    style: "Flip",      difficulty: 8 },
+  { name: "Fingerflip Body Varial",               style: "Flip",      difficulty: 8 }, // giras vos también
+  { name: "Tre Flip revertido fakie",             style: "Fakie",     difficulty: 7 },
+  { name: "Flip a Darkslide",                     style: "Grind",     difficulty: 10 },
+  { name: "Nollie Flip Backside Nosegrind",       style: "Grind",     difficulty: 10 },
+  { name: "Switch Bigspin Heelflip",              style: "Switch",    difficulty: 9 },
+  { name: "Fakie Hardflip Late Shuvit",           style: "Fakie",     difficulty: 9 },
+  { name: "Nollie Inward Heelflip",               style: "Nollie",    difficulty: 7 }
 ];
+
 
 
 /* ==========================================================
